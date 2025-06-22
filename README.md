@@ -81,8 +81,8 @@ node server.js
 
 ### Spielleiter (Clone Instance Owner)
 
-1. **Wallet verbinden**: MetaMask mit dem Host-Account verbinden
-2. **Klon-Instanz erstellen**: Neue Klon-Instanz für das Spiel erstellen
+1. **Wallet verbinden**: MetaMask mit dem Spielleiter-Account verbinden
+2. **Klon-Instanz erstellen**: über vom Template Owner autorisierte Klon-Fabriken
 3. **Spiel initialisieren**:
    - Spieleranzahl (3-25) festlegen
    - Buy-In Betrag setzen
@@ -94,7 +94,7 @@ node server.js
 
 ### Spieler
 
-1. **Wallet verbinden**: MetaMask mit dem Player-Account verbinden
+1. **Wallet verbinden**: MetaMask mit dem Spieler-Account verbinden
 2. **Spiel beitreten**: Über Klon-Instanz-Adresse laufende Spiele finden
 3. **Commit-Phase**:
    - Lucky Number (0-1000) wählen
