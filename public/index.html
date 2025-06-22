@@ -1,0 +1,190 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Numerical Game UI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>
+      Numerical Game
+      <div style="font-size: 12px; color: #666; margin-bottom: 10px">(on Sepolia Testnet)</div>
+      <div style="height: 10px"></div>
+    </h1>
+
+    <h2 style="text-align: left">Game Rules</h2>
+    <div class="function-group game-rules">
+      <h3>How to Play</h3>
+      <div class="rule-item"><strong>Game Setup:</strong> Game Hosts create a clone instance (except they already own one), set game parameters, and start the game.</div>
+      <div class="rule-item"><strong>Commit Phase:</strong> Players choose their lucky number (0-1000), a secret salt, and generate a hash through the integrated generator. Each player submits the hash and pays the buy-in.</div>
+      <div class="rule-item"><strong>Reveal Phase:</strong> Players reveal their lucky numbers and their salt for verification. The result must match the committed hash.</div>
+      <div class="rule-item">
+        <strong>Winner Determination:</strong> Target number = 2/3 of the average of all successfully revealed numbers. The player with the closest number to the target number wins the prize. If multiple players have the same closest number, a random winner gets picked between them.
+      </div>
+      <div class="rule-item"><strong>Timeout:</strong> Game Host has a time window of 24 hours after the reveal phase ended to determine the winner. After that, any player can trigger the function to determine the winner (and gets a caller reward if possible).</div>
+      <div class="rule-item"><strong>Payouts:</strong> Winner gets prize amount. Host gets service fee minus royalties. Template owner gets royalties. If the game conditions were not met, honest players get their buy-in refunded.</div>
+    </div>
+
+    <h2 style="text-align: left">Template Information</h2>
+    <div class="function-group template-info">
+      <div id="templateContract"><strong>Template Contract: </strong> Not loaded</div>
+      <div id="templateOwner"><strong>Template Owner: </strong> Not loaded</div>
+      <div id="templateOwnerRoyalties"><strong>Template Owner Royalties: </strong> Not loaded</div>
+    </div>
+
+    <h2 style="text-align: left">Clone Factory Information</h2>
+    <div class="function-group clone-factory-info">
+      <div id="recommendedFactory"><strong>Recommended Clone Factory: </strong> Loading...</div>
+      <div id="factoryTrustStatus"><strong>Whitelist Status: </strong> Loading...</div>
+    </div>
+
+    <h2 style="text-align: left">Template Owner Functions</h2>
+    <div class="function-group expandable">
+      <button class="expand-button" onclick="toggleSection('templateOwnerSection')">▼ Template Owner Functions</button>
+      <div id="templateOwnerSection" class="expandable-content">
+        <button id="connectWalletTemplate" onclick="connectWallet('connectWalletTemplate')">Connect MetaMask</button>
+        <div id="statusTemplate">Not connected</div>
+
+        <h3>Clone Factory Management</h3>
+        <input type="text" id="addFactoryAddress" placeholder="Clone Factory Address to add to Whitelist" />
+        <button id="addCloneFactory" onclick="addCloneFactory()" disabled>Add Clone Factory to Whitelist</button>
+
+        <input type="text" id="removeFactoryAddress" placeholder="Clone Factory Address to remove from Whitelist" />
+        <button id="removeCloneFactory" onclick="removeCloneFactory()" disabled>Remove Clone Factory from Whitelist</button>
+
+        <input type="text" id="checkTrustAddress" placeholder="Clone Factory Address to check Whitelist Status" />
+        <button id="checkTrustStatus" onclick="checkTrustStatus()" disabled>Check Whitelist Status</button>
+
+        <h3>Template Balance Management</h3>
+        <button id="readTemplateBalance" onclick="getTemplateBalance()" disabled>Read Template Balance</button>
+        <button id="withdrawTemplateBalance" onclick="withdrawTemplateBalance()" disabled>Withdraw Template Balance</button>
+      </div>
+    </div>
+
+    <h2 style="text-align: left">Game Host Functions (Clone Instance Owner)</h2>
+    <div class="function-group expandable">
+      <button class="expand-button" onclick="toggleSection('gameHostSection')">▼ Game Host Functions</button>
+      <div id="gameHostSection" class="expandable-content">
+        <button id="connectWalletHost" onclick="connectWallet('connectWalletHost')">Connect MetaMask</button>
+        <div id="statusHost">Not connected</div>
+
+        <h3>Clone Instance Management</h3>
+        <input type="text" id="verifyAddress" placeholder="Your Account Address" />
+        <button id="verifyOwnership" onclick="cloneAddressByOwner()" disabled>Check Ownership of Clone Instance</button>
+        <div id="verifyResult"></div>
+
+        <h3>Select Clone Factory and Create Clone Instance</h3>
+        <div class="factory-selection">
+          <div class="factory-row">
+            <span><strong>Use recommended Clone Factory: </strong> (<span id="recommendedFactoryAddress">Loading...</span>)</span>
+            <label class="factory-checkbox">
+              <input type="checkbox" id="useRecommendedFactory" checked />
+            </label>
+          </div>
+          <input type="text" id="customFactoryAddress" placeholder="Use other Clone Factory Address" disabled />
+          <div style="height: 20px"></div>
+          <div id="customFactoryResponse" style="min-height: 20px; margin: 5px 0"></div>
+          <input type="text" id="hostCheckTrustAddress" placeholder="Clone Factory Address to check Whitelist Status" />
+          <button id="hostCheckTrustStatus" onclick="hostCheckTrustStatus()" disabled>Check Whitelist Status</button>
+        </div>
+
+        <button id="createClone" onclick="createClone()" disabled>Create Clone Instance</button>
+        <div id="cloneInitialized">Clone initialized: -</div>
+
+        <h3>Select Clone Instance Address</h3>
+        <input type="text" id="hostCloneAddress" placeholder="Clone Instance Address for function calls" />
+        <div id="hostCloneStatus">Status: No clone instance selected</div>
+
+        <h3>Game Management</h3>
+        <input type="number" id="playerAmount" placeholder="Player Amount (3-25)" min="3" max="25" />
+        <input type="number" id="buyIn" placeholder="Buy-In (in Wei, max 0.1 ETH)" min="0" max="100000000000000000" />
+        <input type="number" id="serviceFee" placeholder="Service Fee (1-20%)" min="1" max="20" />
+        <input type="number" id="commitPhase" placeholder="Commit Phase Duration (120-86400 seconds)" min="120" max="86400" />
+        <input type="number" id="revealPhase" placeholder="Reveal Phase Duration (120-86400 seconds)" min="120" max="86400" />
+        <button id="initGame" onclick="initializeNewGame()" disabled>Start New Game</button>
+
+        <h3>Game Actions</h3>
+        <button id="determineWinner" onclick="determineWinner()" disabled>Determine Winner and End Game</button>
+
+        <h3>Clone Balance Management</h3>
+        <button id="readCloneBalance" onclick="getCloneBalance()" disabled>Read Unallocated Clone Balance</button>
+        <button id="withdrawCloneBalance" onclick="withdrawCloneBalance()" disabled>Withdraw Unallocated Balance From Clone</button>
+      </div>
+    </div>
+
+    <h2 style="text-align: left">Current Game Data</h2>
+    <div class="function-group game-data">
+      <h3>Game Status</h3>
+      <div id="cloneInstanceAddress">Clone Instance Address: -</div>
+      <div id="cloneInstanceOwner">Clone Instance Owner: -</div>
+      <div id="gameStatus">Status: No active game</div>
+      <div id="gameCount">Game Count: -</div>
+      <div id="requiredPlayers">Required Players: -</div>
+      <div id="buyInAmount">Buy-In: -</div>
+      <div id="prizeAmount">Prize Amount: -</div>
+      <div id="serviceFeeAmount">Service Fee: -</div>
+
+      <h3>Phase Timers</h3>
+      <div id="commitPhaseTimer">Commit Phase: Not active</div>
+      <div id="playersCommitted">Players Committed: -</div>
+      <div id="revealPhaseTimer">Reveal Phase: Not active</div>
+      <div id="playersRevealed">Players Revealed successfully: -</div>
+      <div id="timeoutTimer">24h Timeout: Not active</div>
+    </div>
+
+    <h2 style="text-align: left">Player Functions</h2>
+    <div class="function-group expandable">
+      <button class="expand-button" onclick="toggleSection('playerSection')">▼ Player Functions</button>
+      <div id="playerSection" class="expandable-content">
+        <button id="connectWalletPlayer" onclick="connectWallet('connectWalletPlayer')">Connect MetaMask</button>
+        <div id="statusPlayer">Not connected</div>
+
+        <h3>Select Clone Instance Address</h3>
+        <input type="text" id="playerCloneAddress" placeholder="Select Clone Instance Address for function calls" />
+        <div id="playerCloneStatus">Status: No clone instance selected</div>
+
+        <h3>Hash Generator Tool</h3>
+        <button id="toggleHashGenerator" onclick="toggleHashGenerator()">📝 Show/Hide Hash Generator</button>
+        <div id="hashGeneratorSection" style="display: none">
+          <input type="number" id="hashNumber" placeholder="Your Lucky Number (0-1000)" min="0" max="1000" />
+          <input type="text" id="hashSalt" placeholder="Your Salt (e.g., mySecretSalt123 )" />
+          <button onclick="generateHash()">Generate SHA-256-Hash</button>
+          <div id="hashResult" class="result-box"></div>
+        </div>
+
+        <h3>Commit to Game</h3>
+        <input type="text" id="secretNumber" placeholder="Salted Hash (0x...)" />
+        <input type="number" id="commitValue" placeholder="Buy-In (in Wei)" min="0" max="100000000000000000" />
+        <button id="commit" onclick="commit()" disabled>Commit</button>
+
+        <h3>Reveal</h3>
+        <input type="number" id="number" placeholder="Your Lucky Number (0-1000)" min="0" max="1000" />
+        <input type="text" id="salt" placeholder="Your Salt (e.g., mySecretSalt123 )" />
+        <button id="reveal" onclick="revealAndVerify()" disabled>Reveal and Verify</button>
+
+        <h3>Game Actions</h3>
+        <button id="determineWinnerPlayer" onclick="determineWinnerPlayer()" disabled>Determine Winner and End Game</button>
+      </div>
+    </div>
+
+    <h2 style="text-align: left">Universal Functions</h2>
+    <div class="function-group expandable">
+      <button class="expand-button" onclick="toggleSection('universalSection')">▼ Universal Functions</button>
+      <div id="universalSection" class="expandable-content">
+        <button id="connectWalletUniversal" onclick="connectWallet('connectWalletUniversal')">Connect MetaMask</button>
+        <div id="statusUniversal">Not connected</div>
+
+        <h3>Refunds and (failed) Payouts</h3>
+        <input type="text" id="universalCloneAddress" placeholder="Select Clone Instance Address" />
+        <div id="universalCloneStatus">Status: No clone instance selected</div>
+        <button id="readUniversalRefunds" onclick="getUniversalRefunds()" disabled>Read Refunds/Payouts Balance From Clone</button>
+        <button id="withdrawUniversalRefunds" onclick="withdrawUniversalRefunds()" disabled>Withdraw Refunds/Payouts From Clone</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

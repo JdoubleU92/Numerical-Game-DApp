@@ -1,0 +1,327 @@
+:root {
+  --background-color: #f5f5f5;
+  --text-color: #333333;
+  --header-color: #1a3c34;
+  --link-color: #0066cc;
+  --button-bg-color: #4caf50;
+  --button-text-color: #ffffff;
+  --button-disabled-bg-color: #cccccc;
+  --input-bg-color: #ffffff;
+  --input-text-color: #333333;
+  --box-border-color: #333333;
+  --box-bg-color: #ffffff;
+  --input-length: 20; /* Global variable for input field size */
+  --timer-active-color: #ff6b6b;
+  --timer-warning-color: #ffa726;
+  --timer-normal-color: #4caf50;
+}
+
+/* Global strong tag rule */
+strong {
+  font-weight: bold !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+}
+
+/* Force bold text in specific boxes */
+#templateContract strong,
+#templateOwner strong,
+#templateOwnerRoyalties strong,
+#recommendedFactory strong,
+#factoryTrustStatus strong {
+  font-weight: bold !important;
+  color: var(--text-color) !important;
+  display: inline !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+h1,
+h2,
+h3 {
+  text-align: center;
+  color: var(--header-color);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button,
+input {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  width: 97%;
+  background-color: var(--input-bg-color);
+  color: var(--input-text-color);
+  size: var(--input-length); /* Apply global input length */
+}
+
+button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 200px; /* Reduced button width */
+  margin: 10px auto; /* Center buttons */
+}
+
+button:disabled {
+  background-color: var(--button-disabled-bg-color);
+  cursor: not-allowed;
+}
+
+#statusHost,
+#statusPlayer,
+#statusTemplate,
+#templateContract,
+#templateOwner,
+#templateOwnerRoyalties {
+  margin: 10px 0;
+  color: var(--text-color);
+  padding: 5px;
+  border-radius: 4px;
+  background-color: var(--input-bg-color);
+}
+
+.function-group {
+  border: 2px solid var(--box-border-color);
+  padding: 25px;
+  margin: 20px 0;
+  border-radius: 8px;
+  background-color: var(--box-bg-color);
+  width: 120%; /* Increase width to fit wider inputs */
+  max-width: 900px; /* Limit maximum width to prevent excessive expansion */
+  box-sizing: border-box;
+  overflow: visible; /* Remove scrollbars, allow content to expand */
+  min-height: 450px; /* Increase minimum height to fit longer inputs */
+}
+
+/* Template info box - same styling as game data */
+.function-group.template-info {
+  min-height: 150px;
+  max-height: 200px;
+}
+
+.function-group.template-info div {
+  margin: 8px 0;
+  padding: 8px;
+  background-color: var(--input-bg-color);
+  border-radius: 4px;
+  border-left: 4px solid var(--box-border-color);
+}
+
+.function-group.template-info strong,
+.function-group.template-info div strong {
+  font-weight: bold !important;
+  color: var(--text-color) !important;
+  display: inline !important;
+}
+
+/* Clone factory info box - same styling as game data */
+.function-group.clone-factory-info {
+  min-height: 150px;
+  max-height: 200px;
+}
+
+.function-group.clone-factory-info div {
+  margin: 8px 0;
+  padding: 8px;
+  background-color: var(--input-bg-color);
+  border-radius: 4px;
+  border-left: 4px solid var(--box-border-color);
+}
+
+.function-group.clone-factory-info strong,
+.function-group.clone-factory-info div strong {
+  font-weight: bold !important;
+  color: var(--text-color) !important;
+  display: inline !important;
+}
+
+/* Factory row layout */
+.factory-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0;
+  padding: 8px;
+  background-color: var(--input-bg-color);
+  border-radius: 4px;
+  border-left: 4px solid var(--box-border-color);
+}
+
+.factory-checkbox {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.factory-checkbox input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  margin-bottom: 0;
+}
+
+/* Game rules box */
+.function-group.game-rules {
+  min-height: 300px;
+}
+
+.rule-item {
+  margin: 12px 0;
+  padding: 10px;
+  background-color: var(--input-bg-color);
+  border-radius: 4px;
+  border-left: 4px solid var(--box-border-color);
+  line-height: 1.4;
+}
+
+/* Game data box styling */
+.function-group.game-data {
+  min-height: 300px;
+}
+
+.game-data div {
+  margin: 8px 0;
+  padding: 8px;
+  background-color: var(--input-bg-color);
+  border-radius: 4px;
+  border-left: 4px solid var(--box-border-color);
+}
+
+/* Expandable sections */
+.function-group.expandable {
+  min-height: auto;
+}
+
+.expand-button {
+  width: 100% !important;
+  background-color: var(--header-color) !important;
+  font-weight: bold;
+  margin-bottom: 15px !important;
+}
+
+.expandable-content {
+  display: none;
+  padding-top: 10px;
+  border-top: 1px solid var(--box-border-color);
+}
+
+.expandable-content.show {
+  display: block;
+}
+
+/* Factory selection styling */
+.factory-selection {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.factory-selection label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.factory-selection input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  margin-bottom: 0;
+}
+
+.factory-selection input[type="text"] {
+  margin-top: 10px;
+}
+
+/* Timer styling */
+#commitPhaseTimer,
+#revealPhaseTimer,
+#timeoutTimer {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.timer-active {
+  color: var(--timer-active-color);
+  animation: pulse 2s infinite;
+}
+
+.timer-warning {
+  color: var(--timer-warning-color);
+}
+
+.timer-normal {
+  color: var(--timer-normal-color);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Hash generator styling */
+#hashGeneratorSection {
+  border: 1px solid var(--box-border-color);
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+  background-color: var(--background-color);
+}
+
+.result-box {
+  background-color: var(--input-bg-color);
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid var(--box-border-color);
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.function-group h3 {
+  margin-top: 40px;
+  margin-bottom: 20px; /* Add blank line below */
+  border-top: 2px solid var(--box-border-color);
+  padding-top: 20px;
+}
+
+.function-group h3:first-child {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+}
+
+.function-group h3::after {
+  content: "";
+  display: block;
+  height: 20px; /* Blank line below the line */
+}

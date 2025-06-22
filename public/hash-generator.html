@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hash Generator für Numerical Game</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 2px solid #333;
+      }
+      input,
+      button {
+        display: block;
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .result {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Hash Generator für Numerical Game</h1>
+      <p>Generieren Sie einen Hash für Ihre verdeckte Zahl:</p>
+
+      <label for="number">Ihre Zahl (0-1000):</label>
+      <input type="number" id="number" min="0" max="1000" placeholder="z.B. 42" />
+
+      <label for="salt">Salt (beliebiger Text):</label>
+      <input type="text" id="salt" placeholder="z.B. meinSalt123" />
+
+      <button onclick="generateHash()">Hash generieren</button>
+
+      <div class="result" id="result" style="display: none">
+        <strong>Generierter Hash:</strong><br />
+        <span id="hashResult"></span><br /><br />
+        <strong>Für das Commit verwenden Sie:</strong><br />
+        <span id="commitValue"></span>
+      </div>
+
+      <h3>Anleitung:</h3>
+      <ol>
+        <li>Geben Sie Ihre gewünschte Zahl ein (0-1000)</li>
+        <li>Geben Sie ein Salt ein (beliebiger Text für zusätzliche Sicherheit)</li>
+        <li>Klicken Sie auf "Hash generieren"</li>
+        <li>Kopieren Sie den generierten Hash für das Commit</li>
+        <li>Merken Sie sich Ihre ursprüngliche Zahl und das Salt für das Reveal</li>
+      </ol>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script>
+      function generateHash() {
+        const number = document.getElementById("number").value;
+        const salt = document.getElementById("salt").value;
+
+        if (!number || !salt) {
+          alert("Bitte geben Sie sowohl eine Zahl als auch ein Salt ein!");
+          return;
+        }
+
+        if (number < 0 || number > 1000) {
+          alert("Die Zahl muss zwischen 0 und 1000 liegen!");
+          return;
+        }
+
+        // Erstelle den Hash wie im Smart Contract
+        const numberStr = number.toString();
+        const hash = Web3.utils.sha3(salt + numberStr);
+
+        document.getElementById("hashResult").textContent = hash;
+        document.getElementById("commitValue").textContent = hash;
+        document.getElementById("result").style.display = "block";
+      }
+    </script>
+  </body>
+</html>
