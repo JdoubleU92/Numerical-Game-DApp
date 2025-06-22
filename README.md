@@ -2,16 +2,18 @@
 
 Eine dezentrale Anwendung (DApp) für ein numerisches Spiel, das auf Ethereum Smart Contracts basiert (Sepolia Testnet).
 Das Spiel ermöglicht es Spielern, verdeckte Zahlen zu committen und zu revealen, wobei der Spieler gewinnt,
-der mit seiner Zahl am nähsten an 2/3 des Durchschnitts aller erfolgreich revealten Zahlen liegt.
+der mit seiner Zahl am nächsten an 2/3 des Durchschnitts aller erfolgreich revealten Zahlen liegt.
+
 
 ## 🚀 Features
 
-- **Clone Factory System**: Jeder Game Host kann eigene Clone-Instanzen erstellen
-- **Multi-Role Support**: Separate Funktionen für Template Owner, Game Hosts und Spieler
+- **Clone Factory System**: Jeder Spielleiter kann dadurch eine Klon-Instanz des Template Contracts erstellen
+- **Multi-Role Support**: Separate Funktionen für Template Owner, Spielleiter und Spieler
 - **Real-time Events**: Live-Updates für alle Spielereignisse
 - **Hash Generator**: Integrierte SHA-256 Hash-Generierung für Commitments
 - **Universal Functions**: Refund- und Payout-Management für alle Benutzer
 - **Responsive UI**: Minimalistische, benutzerfreundliche Oberfläche
+
 
 ## 🛠️ Technologie-Stack
 
@@ -22,6 +24,7 @@ der mit seiner Zahl am nähsten an 2/3 des Durchschnitts aller erfolgreich revea
 - **Smart Contracts**: Solidity v0.8.25 mit OpenZeppelin Libraries
 - **Build Tool**: Hardhat
 
+
 ## 📋 Voraussetzungen
 
 - Node.js (Version 16 oder höher)
@@ -29,13 +32,14 @@ der mit seiner Zahl am nähsten an 2/3 des Durchschnitts aller erfolgreich revea
 - MetaMask Browser Extension
 - Ethereum Sepolia Testnet ETH
 
+
 ## ⚙️ Installation & Setup
 
 ### 1. Repository klonen
 
 ```bash
 git clone <repository-url>
-cd DApp-BC3
+cd Numerical-Game-DApp
 ```
 
 ### 2. Abhängigkeiten installieren
@@ -72,6 +76,7 @@ node server.js
 
 Öffnen Sie `http://localhost:3000` in Ihrem Browser.
 
+
 ## 🎮 Spielablauf
 
 ### Spielleiter (Clone Instance Owner)
@@ -99,12 +104,14 @@ node server.js
 4. **Reveal-Phase**:
    - Lucky Number und Salt offenlegen
    - Verifizierung durch Smart Contract
-5. **Gewinn**: Automatische Auszahlung bei Gewinn (Nachträgliche Abhebung bei Fehlgeschlag)
+5. **Gewinnen**: Automatische Auszahlung an den Gewinner (Nachträgliche Abhebung von Klon-Instanz bei Fehlschlag)
 
 ### Template Owner
 
-1. **Clone Factory Management**: Whitelist für vertrauenswürdige Factory-Contracts verwalten
+1. **Clone Factory Management**: Whitelist für vertrauenswürdige Factory Contracts verwalten
+2. **Royalties**: Automatische Auszahlungen an den Template Owner (Nachträgliche Abhebung von Klon-Instanz bei Fehlschlag)
 
+   
 ## 🏗️ Smart Contract Architektur
 
 ### Core Contracts
@@ -115,53 +122,56 @@ node server.js
 
 ### Key Features
 
-- **Clone Pattern**: Jeder Host erhält eigene Spiel-Instanz
+- **Factory Pattern**: Jeder Spielleiter kontrolliert eine eigene Klon-Instanz; der Template Owner kontrolliert die Factories
 - **Access Control**: Rollenbasierte Berechtigungen
 - **Event System**: Umfassende Event-Logs für Transparenz
-- **Refund System**: Automatische Rückerstattungen bei nicht-erfüllen der Spielanforderungen
+- **Reentrancy Protection**: Reentrancy-Attacken sind nicht möglich
+
 
 ## 🎯 Spielmechanik
 
 ### Gewinner-Ermittlung
 
 1. **Target Number**: 2/3 des Durchschnitts aller erfolgreich revealed Zahlen
-2. **Gewinner**: Spieler mit der nähsten Zahl zur Target Number gewinnt
-3. **Tie-Break**: Bei Gleichstand wird zufällig ein Gewinner ausgewählt
+2. **Gewinner**: Spieler mit der nächsten Zahl zur Target Number gewinnt
+3. **Tie-Break**: Bei Gleichstand wird zufällig ein Gewinner ermittelt
 
 ### Phasen
 
-- **Commit Phase**: Spieler committen verdeckte Zahlen (salted und hashed)
-- **Reveal Phase**: Spieler revealen Zahlen zur Verifizierung
-- **Timeout Phase**: 24h Zeitfenster für Gewinner-Ermittlung
+- **Commit Phase**: Spieler committen verdeckte Zahl (salted und hashed)
+- **Reveal Phase**: Spieler revealen Zahl und Salt zur Verifizierung
+- **Timeout Phase**: 24h Zeitfenster für Spielleiter zur Gewinner-Ermittlung (Nach Ablauf Trigger durch Spieler möglich)
 
 ### Auszahlungen
 
-- **Gewinner**: Erhält den gesamten Preis
-- **Host**: Erhält Service Fee minus Royalties
+- **Gewinner**: Erhält die gesamte Gewinnsumme (Buy-Ins minus Service Fee)
+- **Game Host**: Erhält Service Fee minus Royalties
 - **Template Owner**: Erhält Royalties
-- **Refunds**: Ehrliche Spieler erhalten Buy-In zurück bei Spielabbruch
+- **Refunds**: Ehrliche Spieler erhalten automatisch Buy-In zurück falls Spielanforderungen nicht erfüllt wurden
+
 
 ## 🔧 Entwicklung
 
 ### Projektstruktur
 
 ```
-DApp-BC3/
-├── contracts/          # Smart Contracts (Solidity)
-├── public/             # Frontend (HTML, CSS, JS)
-├── artifacts/          # Kompilierte Contracts (generiert)
-├── cache/              # Hardhat Cache (generiert)
-├── server.js           # Express Server
-├── hardhat.config.js   # Hardhat Konfiguration
-└── package.json        # Dependencies
-```
-
-### Wichtige Befehle
-
-```bash
-npm run compile        # Smart Contracts kompilieren
-npm start              # Server starten
-npm test               # Tests ausführen (falls vorhanden)
+Numerical-Game-DApp/
+├── contracts/                      # Smart Contracts (Solidity)
+│   ├── ApprovedCloneFactory.sol
+│   └── NumericalGame.sol
+├── public/                         # Frontend (JS, HTML, CSS)
+│   ├── index.html
+│   ├── styles.css
+│   ├── app.js
+│   └── hash-generator.html
+├── server.js                       # Express Server
+├── hardhat.config.js               # Hardhat Konfiguration
+├── package.json                    # Dependencies
+├── package-lock.json               # Lock File
+├── numerical-game-abi.json         # Template Contract ABI
+├── approved-clone-factory-abi.json # Clone Factory Contract ABI
+├── README.md                       # Dokumentation
+├── .gitignore                      # Git Ignore
 ```
 
 ## 🌐 Netzwerk
@@ -170,9 +180,6 @@ npm test               # Tests ausführen (falls vorhanden)
 - **RPC Provider**: Alchemy (empfohlen)
 - **Block Explorer**: Sepolia Etherscan
 
-## 📝 Lizenz
-
-ISC License
 
 ## 🤝 Beitragen
 
